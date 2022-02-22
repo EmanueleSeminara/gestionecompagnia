@@ -24,17 +24,17 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
 
 		ArrayList<Compagnia> result = new ArrayList<>();
-		Compagnia userTemp = null;
+		Compagnia compagniaTemp = null;
 
 		try (Statement ps = connection.createStatement(); ResultSet rs = ps.executeQuery("select * from compagnia")) {
 
 			while (rs.next()) {
-				userTemp = new Compagnia();
-				userTemp.setRagioneSociale(rs.getString("ragionesociale"));
-				userTemp.setFatturatoAnnuo(rs.getLong("fatturatoannuo"));
-				userTemp.setDataFondazione(rs.getDate("datafondazione"));
-				userTemp.setId(rs.getLong("ID"));
-				result.add(userTemp);
+				compagniaTemp = new Compagnia();
+				compagniaTemp.setRagioneSociale(rs.getString("ragionesociale"));
+				compagniaTemp.setFatturatoAnnuo(rs.getLong("fatturatoannuo"));
+				compagniaTemp.setDataFondazione(rs.getDate("datafondazione"));
+				compagniaTemp.setId(rs.getLong("ID"));
+				result.add(compagniaTemp);
 			}
 
 		} catch (Exception e) {

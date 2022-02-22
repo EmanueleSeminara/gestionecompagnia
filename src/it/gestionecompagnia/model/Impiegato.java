@@ -1,21 +1,21 @@
 package it.gestionecompagnia.model;
 
-import javax.xml.crypto.Data;
+import java.util.Date;
 
 public class Impiegato {
 	private Long id;
 	private String nome;
 	private String cognome;
 	private String codiceFiscale;
-	private Data dataNascita;
-	private Data dataAssunzione;
+	private Date dataNascita;
+	private Date dataAssunzione;
 	private Compagnia compagnia;
 
 	public Impiegato() {
 		super();
 	}
 
-	public Impiegato(Long id, String nome, String cognome, String codiceFiscale, Data dataNascita, Data dataAssunzione,
+	public Impiegato(Long id, String nome, String cognome, String codiceFiscale, Date dataNascita, Date dataAssunzione,
 			Compagnia compagnia) {
 		super();
 		this.id = id;
@@ -59,19 +59,19 @@ public class Impiegato {
 		this.codiceFiscale = codiceFiscale;
 	}
 
-	public Data getDataNascita() {
+	public Date getDataNascita() {
 		return dataNascita;
 	}
 
-	public void setDataNascita(Data dataNascita) {
+	public void setDataNascita(Date dataNascita) {
 		this.dataNascita = dataNascita;
 	}
 
-	public Data getDataAssunzione() {
+	public Date getDataAssunzione() {
 		return dataAssunzione;
 	}
 
-	public void setDataAssunzione(Data dataAssunzione) {
+	public void setDataAssunzione(Date dataAssunzione) {
 		this.dataAssunzione = dataAssunzione;
 	}
 
