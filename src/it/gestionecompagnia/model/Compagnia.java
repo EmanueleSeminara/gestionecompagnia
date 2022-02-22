@@ -1,22 +1,21 @@
 package it.gestionecompagnia.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import javax.xml.crypto.Data;
 
 public class Compagnia {
 	private Long id;
 	private String ragioneSociale;
 	private Long fatturatoAnnuo;
-	private Data dataFondazione;
+	private Date dataFondazione;
 	private List<Impiegato> impiegati = new ArrayList<>();
 
 	public Compagnia() {
 		super();
 	}
 
-	public Compagnia(Long id, String ragioneSociale, long fatturatoAnnuo, Data dataFondazione) {
+	public Compagnia(Long id, String ragioneSociale, long fatturatoAnnuo, Date dataFondazione) {
 		super();
 		this.id = id;
 		this.ragioneSociale = ragioneSociale;
@@ -48,11 +47,11 @@ public class Compagnia {
 		this.fatturatoAnnuo = fatturatoAnnuo;
 	}
 
-	public Data getDataFondazione() {
+	public Date getDataFondazione() {
 		return dataFondazione;
 	}
 
-	public void setDataFondazione(Data dataFondazione) {
+	public void setDataFondazione(Date dataFondazione) {
 		this.dataFondazione = dataFondazione;
 	}
 
