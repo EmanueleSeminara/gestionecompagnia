@@ -1,6 +1,7 @@
 package it.gestionecompagnia.dao.compagnia;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 		ArrayList<Compagnia> result = new ArrayList<>();
 		Compagnia userTemp = null;
 
-		try (Statement ps = connection.createStatement(); ResultSet rs = ps.executeQuery("select * from user")) {
+		try (Statement ps = connection.createStatement(); ResultSet rs = ps.executeQuery("select * from compagnia")) {
 
 			while (rs.next()) {
 				userTemp = new Compagnia();
@@ -45,8 +46,33 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 
 	@Override
 	public Compagnia get(Long idInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		if (idInput == null || idInput < 1)
+			throw new Exception("Valore di input non ammesso.");
+
+		Compagnia result = null;
+		try (PreparedStatement ps = connection.prepareStatement("select * from compagnia where id=?")) {
+
+			ps.setLong(1, idInput);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					result = new Compagnia();
+					result.setRagioneSociale(rs.getString("ragionesociale"));
+					result.setFatturatoAnnuo(rs.getLong("fatturatoannuo"));
+					result.setDataFondazione(rs.getDate("datafondazione"));
+					result.setId(rs.getLong("ID"));
+				} else {
+					result = null;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override

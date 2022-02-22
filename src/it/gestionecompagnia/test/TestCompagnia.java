@@ -1,11 +1,13 @@
 package it.gestionecompagnia.test;
 
 import java.sql.Connection;
+import java.util.List;
 
 import it.gestionecompagnia.connection.MyConnection;
 import it.gestionecompagnia.dao.Constants;
 import it.gestionecompagnia.dao.compagnia.CompagniaDAO;
 import it.gestionecompagnia.dao.compagnia.CompagniaDAOImpl;
+import it.gestionecompagnia.model.Compagnia;
 
 public class TestCompagnia {
 
@@ -15,11 +17,30 @@ public class TestCompagnia {
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
 			compagniaDAOInstance = new CompagniaDAOImpl(connection);
 
-			System.out.println("In tabella user ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
+			testGet(compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static void testGet(CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testGet inizio.............");
+		List<Compagnia> elencoVociPresenti = compagniaDAOInstance.list();
+		if (elencoVociPresenti.size() < 1)
+			throw new RuntimeException("testFindById : FAILED, non ci sono voci sul DB");
+
+		Compagnia primoDellaLista = elencoVociPresenti.get(0);
+
+		Compagnia elementoCheRicercoColDAO = compagniaDAOInstance.get(primoDellaLista.getId());
+		if (elementoCheRicercoColDAO == null
+				|| !elementoCheRicercoColDAO.getRagioneSociale().equals(primoDellaLista.getRagioneSociale()))
+			throw new RuntimeException("testFindById : FAILED, le login non corrispondono");
+
+		System.out.println(".......testGet fine: PASSED.............");
 	}
 
 }
