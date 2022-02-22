@@ -1,6 +1,7 @@
 package it.gestionecompagnia.test;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class TestCompagnia {
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
 			testDeleteCompagnia(compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
+			testFindByExampleCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
 		} catch (Exception e) {
@@ -105,4 +109,28 @@ public class TestCompagnia {
 		System.out.println(".......testDeleteCompagnia fine: PASSED.............");
 	}
 
+	public static void testFindByExampleCompagnia(CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testFindByExampleCompagnia inizio.............");
+
+		Date dataCreazione = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022");
+
+		Compagnia marioRossi = new Compagnia("Mario", (long) 5, dataCreazione);
+
+		int quantiElementiInseriti = compagniaDAOInstance.insert(marioRossi);
+		if (quantiElementiInseriti < 1) {
+			throw new RuntimeException("testFindAllWhereDateCreatedGreaterThan : FAILED, user non inserito");
+		}
+
+		List<Compagnia> elencoVoci = compagniaDAOInstance.findByExample(marioRossi);
+		for (Compagnia compagniaItem : elencoVoci) {
+			if (!compagniaItem.getDataFondazione().equals(marioRossi.getDataFondazione())
+					|| !compagniaItem.getFatturatoAnnuo().equals(marioRossi.getFatturatoAnnuo())
+					|| !compagniaItem.getRagioneSociale().equals(marioRossi.getRagioneSociale())) {
+				throw new RuntimeException(
+						"testFindAllWhereDateCreatedGreaterThan : FAILED, compagnia con dati diversi diverso"
+								+ compagniaItem.getId());
+			}
+		}
+		System.out.println(".......testFindByExampleCompagnia fine: PASSED.............");
+	}
 }
