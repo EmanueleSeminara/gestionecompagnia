@@ -23,10 +23,13 @@ public class TestCompagnia {
 			testInsertCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
-			testGet(compagniaDAOInstance);
+			testGetCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
-			testUpdate(compagniaDAOInstance);
+			testUpdateCompagnia(compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
+			testDeleteCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
 		} catch (Exception e) {
@@ -34,7 +37,7 @@ public class TestCompagnia {
 		}
 	}
 
-	private static void testGet(CompagniaDAO compagniaDAOInstance) throws Exception {
+	private static void testGetCompagnia(CompagniaDAO compagniaDAOInstance) throws Exception {
 		System.out.println(".......testGet inizio.............");
 		List<Compagnia> elencoVociPresenti = compagniaDAOInstance.list();
 		if (elencoVociPresenti.size() < 1)
@@ -59,7 +62,7 @@ public class TestCompagnia {
 		System.out.println(".......testInsertCompagnia fine: PASSED.............");
 	}
 
-	private static void testUpdate(CompagniaDAO compagniaDAOInstance) throws Exception {
+	private static void testUpdateCompagnia(CompagniaDAO compagniaDAOInstance) throws Exception {
 		System.out.println(".......testUpdate inizio.............");
 		List<Compagnia> elencoCompagniaPresenti = compagniaDAOInstance.list();
 		if (elencoCompagniaPresenti.size() < 1)
@@ -79,6 +82,27 @@ public class TestCompagnia {
 		}
 
 		System.out.println(".......testUpdate fine: PASSED.............");
+	}
+
+	private static void testDeleteCompagnia(CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testDeleteCompagnias inizio.............");
+		int quantiElementiInseriti = compagniaDAOInstance.insert(new Compagnia("Giuseppe", (long) 4, new Date()));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testDeleteUser : FAILED, compagnia da rimuovere non inserito");
+
+		List<Compagnia> elencoVociPresenti = compagniaDAOInstance.list();
+		int numeroElementiPresentiPrimaDellaRimozione = elencoVociPresenti.size();
+		if (numeroElementiPresentiPrimaDellaRimozione < 1)
+			throw new RuntimeException("testDeleteUser : FAILED, non ci sono voci sul DB");
+
+		Compagnia ultimoDellaLista = elencoVociPresenti.get(numeroElementiPresentiPrimaDellaRimozione - 1);
+		compagniaDAOInstance.delete(ultimoDellaLista);
+
+		int numeroElementiPresentiDopoDellaRimozione = compagniaDAOInstance.list().size();
+		if (numeroElementiPresentiDopoDellaRimozione != numeroElementiPresentiPrimaDellaRimozione - 1)
+			throw new RuntimeException("testDeleteUser : FAILED, la rimozione non è avvenuta");
+
+		System.out.println(".......testDeleteCompagnia fine: PASSED.............");
 	}
 
 }
