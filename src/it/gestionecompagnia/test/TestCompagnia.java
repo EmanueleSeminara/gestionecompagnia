@@ -26,6 +26,9 @@ public class TestCompagnia {
 			testGet(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
+			testUpdate(compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,6 +57,28 @@ public class TestCompagnia {
 			throw new RuntimeException("testInsertUser : FAILED");
 
 		System.out.println(".......testInsertCompagnia fine: PASSED.............");
+	}
+
+	private static void testUpdate(CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testUpdate inizio.............");
+		List<Compagnia> elencoCompagniaPresenti = compagniaDAOInstance.list();
+		if (elencoCompagniaPresenti.size() < 1)
+			throw new RuntimeException("testUpdate : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaModificare = elencoCompagniaPresenti.get(0);
+		compagniaDaModificare.setRagioneSociale("Pluto");
+
+		int numeroModifiche = compagniaDAOInstance.update(compagniaDaModificare);
+		if (numeroModifiche != 1) {
+			throw new RuntimeException("testUpdate : FAILED, nessun elemento modificato nel DB");
+		}
+
+		Compagnia negozioDaVerificare = compagniaDAOInstance.get(compagniaDaModificare.getId());
+
+		if (!negozioDaVerificare.getRagioneSociale().equals(compagniaDaModificare.getRagioneSociale())) {
+			throw new RuntimeException("testUpdate : FAILED, i dati aggiornati non corrispondono");
+		}
+
+		System.out.println(".......testUpdate fine: PASSED.............");
 	}
 
 }
