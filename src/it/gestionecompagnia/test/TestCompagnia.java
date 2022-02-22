@@ -9,15 +9,20 @@ import it.gestionecompagnia.connection.MyConnection;
 import it.gestionecompagnia.dao.Constants;
 import it.gestionecompagnia.dao.compagnia.CompagniaDAO;
 import it.gestionecompagnia.dao.compagnia.CompagniaDAOImpl;
+import it.gestionecompagnia.dao.impiegato.ImpiegatoDAO;
+import it.gestionecompagnia.dao.impiegato.ImpiegatoDAOImpl;
 import it.gestionecompagnia.model.Compagnia;
+import it.gestionecompagnia.model.Impiegato;
 
 public class TestCompagnia {
 
 	public static void main(String[] args) {
 		CompagniaDAO compagniaDAOInstance = null;
+		ImpiegatoDAO impiegatoDAOInstance = null;
 
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
 			compagniaDAOInstance = new CompagniaDAOImpl(connection);
+			impiegatoDAOInstance = new ImpiegatoDAOImpl(connection);
 
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
@@ -36,11 +41,15 @@ public class TestCompagnia {
 			testFindByExampleCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
+			testGetImpiegato(impiegatoDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	// ========== Test Compagnia ==========
 	private static void testGetCompagnia(CompagniaDAO compagniaDAOInstance) throws Exception {
 		System.out.println(".......testGet inizio.............");
 		List<Compagnia> elencoVociPresenti = compagniaDAOInstance.list();
@@ -132,5 +141,24 @@ public class TestCompagnia {
 			}
 		}
 		System.out.println(".......testFindByExampleCompagnia fine: PASSED.............");
+	}
+
+	// ========== Test Impiegato ==========
+	private static void testGetImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+		System.out.println(".......testGetImpiegato inizio.............");
+		List<Impiegato> elencoVociPresenti = impiegatoDAOInstance.list();
+		if (elencoVociPresenti.size() < 1)
+			throw new RuntimeException("testGetImpiegato : FAILED, non ci sono voci sul DB");
+
+		Impiegato primoDellaLista = elencoVociPresenti.get(0);
+
+		Impiegato elementoCheRicercoColDAO = impiegatoDAOInstance.get(primoDellaLista.getId());
+		if (elementoCheRicercoColDAO == null
+				|| !elementoCheRicercoColDAO.getCodiceFiscale().equals(primoDellaLista.getCodiceFiscale())
+				|| !elementoCheRicercoColDAO.getNome().equals(primoDellaLista.getNome())
+				|| !elementoCheRicercoColDAO.getCognome().equals(primoDellaLista.getCognome()))
+			throw new RuntimeException("testGetImpiegato : FAILED, le login non corrispondono");
+
+		System.out.println(".......testGetImpiegato fine: PASSED.............");
 	}
 }
