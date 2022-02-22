@@ -83,8 +83,24 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 
 	@Override
 	public int insert(Compagnia input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		if (input == null)
+			throw new Exception("Valore di input non ammesso.");
+
+		int result = 0;
+		try (PreparedStatement ps = connection.prepareStatement(
+				"INSERT INTO compagnia (datafondazione, fatturatoannuo, ragionesociale) VALUES (?, ?, ?);")) {
+			ps.setDate(1, new java.sql.Date(input.getDataFondazione().getTime()));
+			ps.setLong(2, input.getFatturatoAnnuo());
+			ps.setString(3, input.getRagioneSociale());
+			result = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override

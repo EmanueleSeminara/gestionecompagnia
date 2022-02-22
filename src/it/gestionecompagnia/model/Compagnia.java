@@ -15,9 +15,8 @@ public class Compagnia {
 		super();
 	}
 
-	public Compagnia(Long id, String ragioneSociale, long fatturatoAnnuo, Date dataFondazione) {
+	public Compagnia(String ragioneSociale, long fatturatoAnnuo, Date dataFondazione) {
 		super();
-		this.id = id;
 		this.ragioneSociale = ragioneSociale;
 		this.fatturatoAnnuo = fatturatoAnnuo;
 		this.dataFondazione = dataFondazione;

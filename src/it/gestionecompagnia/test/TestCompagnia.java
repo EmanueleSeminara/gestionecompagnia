@@ -1,6 +1,7 @@
 package it.gestionecompagnia.test;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 
 import it.gestionecompagnia.connection.MyConnection;
@@ -17,6 +18,9 @@ public class TestCompagnia {
 		try (Connection connection = MyConnection.getConnection(Constants.DRIVER_NAME, Constants.CONNECTION_URL)) {
 			compagniaDAOInstance = new CompagniaDAOImpl(connection);
 
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
+			testInsertCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
 			testGet(compagniaDAOInstance);
@@ -41,6 +45,15 @@ public class TestCompagnia {
 			throw new RuntimeException("testFindById : FAILED, le login non corrispondono");
 
 		System.out.println(".......testGet fine: PASSED.............");
+	}
+
+	private static void testInsertCompagnia(CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testInsertCompagnia inizio.............");
+		int quantiElementiInseriti = compagniaDAOInstance.insert(new Compagnia("pluto", (long) 5, new Date()));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testInsertUser : FAILED");
+
+		System.out.println(".......testInsertCompagnia fine: PASSED.............");
 	}
 
 }
