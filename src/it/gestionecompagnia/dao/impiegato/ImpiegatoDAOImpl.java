@@ -1,7 +1,6 @@
 package it.gestionecompagnia.dao.impiegato;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -135,8 +134,21 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 
 	@Override
 	public int delete(Impiegato input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		if (input == null || input.getId() == null || input.getId() < 1)
+			throw new Exception("Valore di input non ammesso.");
+
+		int result = 0;
+		try (PreparedStatement ps = connection.prepareStatement("DELETE FROM impiegato WHERE ID=?")) {
+			ps.setLong(1, input.getId());
+			result = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override

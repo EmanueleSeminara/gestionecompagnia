@@ -50,6 +50,9 @@ public class TestCompagnia {
 			testUpdateImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
+			testDeleteImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -213,5 +216,31 @@ public class TestCompagnia {
 		}
 
 		System.out.println(".......testUpdateImpiegato fine: PASSED.............");
+	}
+
+	private static void testDeleteImpiegato(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
+			throws Exception {
+		System.out.println(".......testDeleteImpiegato inizio.............");
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException("testUpdateImpiegato : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Paperino", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testInsertUser : FAILED");
+		List<Impiegato> elencoImpiegati = impiegatoDAOInstance.list();
+		if (elencoImpiegati.size() < 1)
+			throw new RuntimeException("testUpdateImpiegato : FAILED, non ci sono compagnie sul DB");
+		Impiegato impiegatoDaEliminare = elencoImpiegati.get(elencoImpiegati.size() - 1);
+
+		impiegatoDAOInstance.delete(impiegatoDaEliminare);
+
+		int numeroElementiPresentiDopoLaRimozione = impiegatoDAOInstance.list().size();
+		if (numeroElementiPresentiDopoLaRimozione != elencoImpiegati.size() - 1)
+			throw new RuntimeException("testDeleteUser : FAILED, la rimozione non è avvenuta");
+
+		System.out.println(".......testDeleteImpiegato fine: PASSED.............");
 	}
 }
