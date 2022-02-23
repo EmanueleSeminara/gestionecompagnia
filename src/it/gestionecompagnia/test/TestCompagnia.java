@@ -366,4 +366,29 @@ public class TestCompagnia {
 
 		System.out.println(".......testFindAllByCompagnia fine: PASSED.............");
 	}
+
+	public static void testCountByDataFondazioneCompagniaGreaterThen(ImpiegatoDAO impiegatoDAOInstance,
+			CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testCountByDataFondazioneCompagniaGreaterThen inizio.............");
+
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException(
+					"testCountByDataFondazioneCompagniaGreaterThen : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+		Date dataFondazione = new SimpleDateFormat("dd-mm-yyyy").parse("05-10-1990");
+
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Paperino", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testCountByDataFondazioneCompagniaGreaterThen : FAILED");
+
+		int impiegatiDelleCompagnia = impiegatoDAOInstance.countByDataFondazioneCompagniaGreaterThen(dataFondazione);
+
+		if (impiegatiDelleCompagnia < 0) {
+			throw new RuntimeException("testCountByDataFondazioneCompagniaGreaterThen : FAILED");
+		}
+
+		System.out.println(".......testCountByDataFondazioneCompagniaGreaterThen fine: PASSED.............");
+	}
 }

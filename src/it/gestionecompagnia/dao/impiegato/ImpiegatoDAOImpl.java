@@ -5,9 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import javax.xml.crypto.Data;
 
 import it.gestionecompagnia.dao.AbstractMySQLDAO;
 import it.gestionecompagnia.model.Compagnia;
@@ -238,9 +237,28 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 	}
 
 	@Override
-	public int countByDataFondazioneCompagniaGreaterThen(Data dataInput) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+	public int countByDataFondazioneCompagniaGreaterThen(Date dataInput) throws Exception {
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		int result = 0;
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select count(*) as totale from impiegato i inner join compagnia c on c.id=i.compagnia_id where c.datafondazione > ?;")) {
+			{
+				ps.setDate(1, new java.sql.Date(dataInput.getTime()));
+				try (ResultSet rs = ps.executeQuery()) {
+
+					if (rs.next()) {
+						result = rs.getInt("total");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
