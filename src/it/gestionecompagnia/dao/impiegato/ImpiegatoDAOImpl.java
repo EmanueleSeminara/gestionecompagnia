@@ -1,6 +1,7 @@
 package it.gestionecompagnia.dao.impiegato;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -56,12 +57,11 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 			throw new Exception("Valore di input non ammesso.");
 
 		Impiegato result = null;
-		try (PreparedStatement ps = connection.prepareStatement("select * from compagnia where id=?")) {
+		try (PreparedStatement ps = connection.prepareStatement("select * from impiegato where id=?")) {
 
 			ps.setLong(1, idInput);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					result = new Impiegato();
 					result = new Impiegato();
 					result.setNome(rs.getString("nome"));
 					result.setCognome(rs.getString("cognome"));
@@ -90,8 +90,27 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 
 	@Override
 	public int insert(Impiegato input) throws Exception {
-		// TODO Auto-generated method stub
-		return 0;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		if (input == null)
+			throw new Exception("Valore di input non ammesso.");
+
+		int result = 0;
+		try (PreparedStatement ps = connection.prepareStatement(
+				"INSERT INTO impiegato (codicefiscale, cognome, compagnia_id, dataassunzione, datanascita, nome) VALUES (?, ?, ?, ?, ?, ?);")) {
+			ps.setString(1, input.getCodiceFiscale());
+			ps.setString(2, input.getCognome());
+			ps.setLong(3, input.getCompagnia().getId());
+			ps.setDate(4, new java.sql.Date(input.getDataAssunzione().getTime()));
+			ps.setDate(5, new java.sql.Date(input.getDataNascita().getTime()));
+			ps.setString(6, input.getNome());
+			result = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override

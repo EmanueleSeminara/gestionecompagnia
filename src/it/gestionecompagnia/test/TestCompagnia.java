@@ -41,6 +41,9 @@ public class TestCompagnia {
 			testFindByExampleCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
+			testInsertImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
 			testGetImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
@@ -160,5 +163,22 @@ public class TestCompagnia {
 			throw new RuntimeException("testGetImpiegato : FAILED, le login non corrispondono");
 
 		System.out.println(".......testGetImpiegato fine: PASSED.............");
+	}
+
+	private static void testInsertImpiegato(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
+			throws Exception {
+		System.out.println(".......testInsertImpiegato inizio.............");
+		List<Compagnia> elencoVociPresenti = compagniaDAOInstance.list();
+		int numeroElementi = elencoVociPresenti.size();
+		if (numeroElementi < 1)
+			throw new RuntimeException("testInsertImpiegato : FAILED, non ci sono voci sul DB");
+
+		Compagnia compagniaDaAttribuire = elencoVociPresenti.get(numeroElementi - 1);
+		int quantiElementiInseriti = impiegatoDAOInstance.insert(
+				new Impiegato((long) 5, "Pluto", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testInsertUser : FAILED");
+
+		System.out.println(".......testInsertImpiegato fine: PASSED.............");
 	}
 }
