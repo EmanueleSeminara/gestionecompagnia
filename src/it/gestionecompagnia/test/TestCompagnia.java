@@ -26,6 +26,7 @@ public class TestCompagnia {
 
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
+			// ========== Test Compagnia ==========
 			testInsertCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
@@ -41,6 +42,10 @@ public class TestCompagnia {
 			testFindByExampleCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
+			testFindAllByDataAssunzioneMaggioreDi(compagniaDAOInstance, impiegatoDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
+			// ========== Test Impiegato ==========
 			testInsertImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
@@ -153,6 +158,30 @@ public class TestCompagnia {
 			}
 		}
 		System.out.println(".......testFindByExampleCompagnia fine: PASSED.............");
+	}
+
+	private static void testFindAllByDataAssunzioneMaggioreDi(CompagniaDAO compagniaDAOInstance,
+			ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+		System.out.println(".......testFindAllByDataAssunzioneMaggioreDi inizio.............");
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException("testUpdateImpiegato : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+		Date dataAssunzione = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022");
+
+		Impiegato marioRossi = new Impiegato("Pluto", "Pippo", "Topolino", new Date(), dataAssunzione,
+				compagniaDaAttribuire);
+
+		int quantiElementiInseriti = impiegatoDAOInstance.insert(marioRossi);
+		if (quantiElementiInseriti < 1) {
+			throw new RuntimeException("testFindAllByDataAssunzioneMaggioreDi : FAILED, user non inserito");
+		}
+
+		List<Compagnia> elencoVoci = compagniaDAOInstance.findAllByDataAssunzioneMaggioreDi(dataAssunzione);
+		if (elencoVoci == null) {
+			throw new RuntimeException("testFindAllByDataAssunzioneMaggioreDi : FAILED, ricerca fallita");
+		}
+		System.out.println(".......testFindAllByDataAssunzioneMaggioreDi fine: PASSED.............");
 	}
 
 	// ========== Test Impiegato ==========
