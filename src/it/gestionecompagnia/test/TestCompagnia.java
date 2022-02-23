@@ -45,6 +45,12 @@ public class TestCompagnia {
 			testFindAllByDataAssunzioneMaggioreDi(compagniaDAOInstance, impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
+			testFindAllByRagioneSocialeContiene(compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
+			testFindAllByCodFissImpiegatoContiene(compagniaDAOInstance, impiegatoDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+
 			// ========== Test Impiegato ==========
 			testInsertImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
@@ -178,6 +184,45 @@ public class TestCompagnia {
 		}
 
 		List<Compagnia> elencoVoci = compagniaDAOInstance.findAllByDataAssunzioneMaggioreDi(dataAssunzione);
+		if (elencoVoci == null) {
+			throw new RuntimeException("testFindAllByDataAssunzioneMaggioreDi : FAILED, ricerca fallita");
+		}
+		System.out.println(".......testFindAllByDataAssunzioneMaggioreDi fine: PASSED.............");
+	}
+
+	private static void testFindAllByRagioneSocialeContiene(CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testFindAllByRagioneSocialeContiene inizio.............");
+		int quantiElementiInseriti = compagniaDAOInstance.insert(new Compagnia("pluto", (long) 5, new Date()));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testInsertUser : FAILED");
+
+		List<Compagnia> compagnieContenentiRagioneSociale = compagniaDAOInstance
+				.findAllByRagioneSocialeContiene("pluto");
+
+		if (compagnieContenentiRagioneSociale == null)
+			throw new RuntimeException("testFindAllByRagioneSocialeContiene : FAILED, ricerca fallita");
+
+		System.out.println(".......testFindAllByRagioneSocialeContiene fine: PASSED.............");
+	}
+
+	private static void testFindAllByCodFissImpiegatoContiene(CompagniaDAO compagniaDAOInstance,
+			ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+		System.out.println(".......testFindAllByDataAssunzioneMaggioreDi inizio.............");
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException("testUpdateImpiegato : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+		String codiceFiscale = "asd123";
+
+		Impiegato marioRossi = new Impiegato("Pluto", "Pippo", "Topolino", new Date(), new Date(),
+				compagniaDaAttribuire);
+
+		int quantiElementiInseriti = impiegatoDAOInstance.insert(marioRossi);
+		if (quantiElementiInseriti < 1) {
+			throw new RuntimeException("testFindAllByDataAssunzioneMaggioreDi : FAILED, user non inserito");
+		}
+
+		List<Compagnia> elencoVoci = compagniaDAOInstance.findAllByCodFissImpiegatoContiene(codiceFiscale);
 		if (elencoVoci == null) {
 			throw new RuntimeException("testFindAllByDataAssunzioneMaggioreDi : FAILED, ricerca fallita");
 		}

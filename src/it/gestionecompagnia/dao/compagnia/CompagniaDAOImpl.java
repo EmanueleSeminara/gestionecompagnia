@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.crypto.Data;
-
 import it.gestionecompagnia.dao.AbstractMySQLDAO;
 import it.gestionecompagnia.model.Compagnia;
 
@@ -190,7 +188,7 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 		Compagnia compagniaTemp = null;
 
 		try (PreparedStatement ps = connection.prepareStatement(
-				"select * from compagnia c inner join impiegato i on c.id=i.compagnia_id where dataassunzione > ?;")) {
+				"select distinct(c.id), c.ragionesociale, c.fatturatoannuo, c.datafondazione from compagnia c inner join impiegato i on c.id=i.compagnia_id where dataassunzione > ?;")) {
 			{
 				ps.setDate(1, new java.sql.Date(dataInput.getTime()));
 				try (ResultSet rs = ps.executeQuery()) {
@@ -214,14 +212,64 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 
 	@Override
 	public List<Compagnia> findAllByRagioneSocialeContiene(String ragioneSocialeInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		ArrayList<Compagnia> result = new ArrayList<>();
+		Compagnia compagniaTemp = null;
+
+		try (PreparedStatement ps = connection
+				.prepareStatement("select * from compagnia where ragionesociale like ?;")) {
+			{
+				ps.setString(1, "%" + ragioneSocialeInput + "%");
+				try (ResultSet rs = ps.executeQuery()) {
+
+					while (rs.next()) {
+						compagniaTemp = new Compagnia();
+						compagniaTemp.setRagioneSociale(rs.getString("ragionesociale"));
+						compagniaTemp.setFatturatoAnnuo(rs.getLong("fatturatoannuo"));
+						compagniaTemp.setDataFondazione(rs.getDate("datafondazione"));
+						compagniaTemp.setId(rs.getLong("ID"));
+						result.add(compagniaTemp);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override
 	public List<Compagnia> findAllByCodFissImpiegatoContiene(String tokeCodiceFiscaleInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		ArrayList<Compagnia> result = new ArrayList<>();
+		Compagnia compagniaTemp = null;
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select distinct(c.id), c.ragionesociale, c.fatturatoannuo, c.datafondazione from compagnia c inner join impiegato i on c.id=i.compagnia_id where codicefiscale like ?;")) {
+			{
+				ps.setString(1, "%" + tokeCodiceFiscaleInput + "%");
+				try (ResultSet rs = ps.executeQuery()) {
+
+					while (rs.next()) {
+						compagniaTemp = new Compagnia();
+						compagniaTemp.setRagioneSociale(rs.getString("ragionesociale"));
+						compagniaTemp.setFatturatoAnnuo(rs.getLong("fatturatoannuo"));
+						compagniaTemp.setDataFondazione(rs.getDate("datafondazione"));
+						compagniaTemp.setId(rs.getLong("ID"));
+						result.add(compagniaTemp);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 }
