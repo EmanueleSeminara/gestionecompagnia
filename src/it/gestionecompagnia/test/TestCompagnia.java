@@ -53,6 +53,9 @@ public class TestCompagnia {
 			testDeleteImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
+			testFindByExampleImpiegato(impiegatoDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -242,5 +245,25 @@ public class TestCompagnia {
 			throw new RuntimeException("testDeleteUser : FAILED, la rimozione non è avvenuta");
 
 		System.out.println(".......testDeleteImpiegato fine: PASSED.............");
+	}
+
+	public static void testFindByExampleImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+		System.out.println(".......testFindByExampleImpiegato inizio.............");
+
+		Date dataAssunzione = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022");
+
+		Impiegato marioRossi = new Impiegato("Paperino", null, "Topolino", null, dataAssunzione, null);
+
+		List<Impiegato> elencoVoci = impiegatoDAOInstance.findByExample(marioRossi);
+		for (Impiegato impiegatoItem : elencoVoci) {
+			if (!impiegatoItem.getNome().equals(marioRossi.getNome())
+					|| !impiegatoItem.getCodiceFiscale().equals(marioRossi.getCodiceFiscale())
+					|| !impiegatoItem.getDataAssunzione().equals(marioRossi.getDataAssunzione())) {
+				throw new RuntimeException(
+						"testFindAllWhereDateCreatedGreaterThan : FAILED, compagnia con dati diversi diverso"
+								+ impiegatoItem.getId());
+			}
+		}
+		System.out.println(".......testFindByExampleImpiegato fine: PASSED.............");
 	}
 }
