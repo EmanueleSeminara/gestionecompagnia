@@ -47,6 +47,9 @@ public class TestCompagnia {
 			testGetImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
+			testUpdateImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -174,11 +177,41 @@ public class TestCompagnia {
 			throw new RuntimeException("testInsertImpiegato : FAILED, non ci sono voci sul DB");
 
 		Compagnia compagniaDaAttribuire = elencoVociPresenti.get(numeroElementi - 1);
-		int quantiElementiInseriti = impiegatoDAOInstance.insert(
-				new Impiegato((long) 5, "Pluto", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Pluto", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
 		if (quantiElementiInseriti < 1)
 			throw new RuntimeException("testInsertUser : FAILED");
 
 		System.out.println(".......testInsertImpiegato fine: PASSED.............");
+	}
+
+	private static void testUpdateImpiegato(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
+			throws Exception {
+		System.out.println(".......testUpdateImpiegato inizio.............");
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException("testUpdateImpiegato : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Paperino", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testInsertUser : FAILED");
+		List<Impiegato> elencoImpiegati = impiegatoDAOInstance.list();
+		if (elencoImpiegati.size() < 1)
+			throw new RuntimeException("testUpdateImpiegato : FAILED, non ci sono compagnie sul DB");
+		Impiegato impiegatoDaModificare = elencoImpiegati.get(elencoImpiegati.size() - 1);
+		impiegatoDaModificare.setNome("Pluto");
+		impiegatoDaModificare.setCompagnia(compagniaDaAttribuire);
+		int numeroModifiche = impiegatoDAOInstance.update(impiegatoDaModificare);
+		if (numeroModifiche != 1) {
+			throw new RuntimeException("testUpdateImpiegato : FAILED, nessun elemento modificato nel DB");
+		}
+
+		if (!impiegatoDaModificare.getNome().equals("Pluto")) {
+			throw new RuntimeException("testUpdateImpiegato : FAILED, i dati aggiornati non corrispondono");
+		}
+
+		System.out.println(".......testUpdateImpiegato fine: PASSED.............");
 	}
 }
