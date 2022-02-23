@@ -67,6 +67,9 @@ public class TestCompagnia {
 			testFindByExampleImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
+			testFindAllByCompagnia(impiegatoDAOInstance, compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -339,5 +342,28 @@ public class TestCompagnia {
 			}
 		}
 		System.out.println(".......testFindByExampleImpiegato fine: PASSED.............");
+	}
+
+	public static void testFindAllByCompagnia(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
+			throws Exception {
+		System.out.println(".......testFindAllByCompagnia inizio.............");
+
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException("testFindAllByCompagnia : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Paperino", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testFindAllByCompagnia : FAILED");
+
+		List<Impiegato> impiegatiDellaCompagnia = impiegatoDAOInstance.findAllByCompagnia(compagniaDaAttribuire);
+
+		if (impiegatiDellaCompagnia == null) {
+			throw new RuntimeException("testFindAllByCompagnia : FAILED");
+		}
+
+		System.out.println(".......testFindAllByCompagnia fine: PASSED.............");
 	}
 }
