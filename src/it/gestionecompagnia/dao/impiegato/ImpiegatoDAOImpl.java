@@ -237,7 +237,7 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 	}
 
 	@Override
-	public int countByDataFondazioneCompagniaGreaterThen(Date dataInput) throws Exception {
+	public int countByDataFondazioneCompagniaGreaterThan(Date dataInput) throws Exception {
 		if (isNotActive())
 			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
 
@@ -263,8 +263,35 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 
 	@Override
 	public List<Impiegato> findAllByCompagniaConFatturatoMaggioreDi(long fatturatoInput) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (isNotActive())
+			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
+
+		ArrayList<Impiegato> result = new ArrayList<>();
+		Impiegato impiegatoTemp = null;
+
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select * from impiegato i inner join compagnia c on c.id=i.compagnia_id where c.fatturatoannuo > ?;")) {
+			{
+				ps.setLong(1, fatturatoInput);
+				try (ResultSet rs = ps.executeQuery()) {
+
+					while (rs.next()) {
+						impiegatoTemp = new Impiegato();
+						impiegatoTemp.setNome(rs.getString("nome"));
+						impiegatoTemp.setCognome(rs.getString("cognome"));
+						impiegatoTemp.setCodiceFiscale(rs.getString("codicefiscale"));
+						impiegatoTemp.setDataAssunzione(rs.getDate("dataassunzione"));
+						impiegatoTemp.setDataNascita(rs.getDate("datanascita"));
+						impiegatoTemp.setId(rs.getLong("ID"));
+						result.add(impiegatoTemp);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return result;
 	}
 
 	@Override

@@ -383,12 +383,38 @@ public class TestCompagnia {
 		if (quantiElementiInseriti < 1)
 			throw new RuntimeException("testCountByDataFondazioneCompagniaGreaterThen : FAILED");
 
-		int impiegatiDelleCompagnia = impiegatoDAOInstance.countByDataFondazioneCompagniaGreaterThen(dataFondazione);
+		int impiegatiDelleCompagnia = impiegatoDAOInstance.countByDataFondazioneCompagniaGreaterThan(dataFondazione);
 
 		if (impiegatiDelleCompagnia < 0) {
 			throw new RuntimeException("testCountByDataFondazioneCompagniaGreaterThen : FAILED");
 		}
 
 		System.out.println(".......testCountByDataFondazioneCompagniaGreaterThen fine: PASSED.............");
+	}
+
+	// METODO DA FINIRE (O FORSE INIZIARE)
+	public static void testFindAllByCompagniaConFatturatoMaggioreDi(ImpiegatoDAO impiegatoDAOInstance,
+			CompagniaDAO compagniaDAOInstance) throws Exception {
+		System.out.println(".......testFindAllByCompagniaConFatturatoMaggioreDi inizio.............");
+
+		List<Compagnia> elencoCompagniePresenti = compagniaDAOInstance.list();
+		if (elencoCompagniePresenti.size() < 1)
+			throw new RuntimeException(
+					"testFindAllByCompagniaConFatturatoMaggioreDi : FAILED, non ci sono compagnie sul DB");
+		Compagnia compagniaDaAttribuire = elencoCompagniePresenti.get(0);
+
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Paperino", "Pippo", "Topolino", new Date(), new Date(), compagniaDaAttribuire));
+		if (quantiElementiInseriti < 1)
+			throw new RuntimeException("testFindAllByCompagniaConFatturatoMaggioreDi : FAILED");
+
+		List<Impiegato> impiegatiDellaCompagnia = impiegatoDAOInstance
+				.findAllByCompagniaConFatturatoMaggioreDi(Long.parseLong("2"));
+
+		if (impiegatiDellaCompagnia == null) {
+			throw new RuntimeException("testFindAllByCompagniaConFatturatoMaggioreDi : FAILED");
+		}
+
+		System.out.println(".......testFindAllByCompagniaConFatturatoMaggioreDi fine: PASSED.............");
 	}
 }
